@@ -1,0 +1,6 @@
+## .gitignore
+
+# ignore vim artifacts
+.*.sw?
+*~
+
