@@ -1,0 +1,12 @@
+
+
+.*.sw?
+*~
+.vagrant/
+packer_cache/
+build/
+ovf/
+out/
+iso/
+iso
+*.box
