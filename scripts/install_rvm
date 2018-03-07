@@ -1,4 +1,4 @@
-#!/bin/bash -eux
+#!/bin/bash 
 ## this one needs bash.. sh won't work.
 
 # setup gems to not install documentation
