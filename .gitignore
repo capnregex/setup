@@ -4,3 +4,19 @@
 .*.sw?
 *~
 
+#ignore vagrant artifacts
+.vagrant/
+
+# ignore packer artifacts
+packer_cache/
+build/
+ovf/
+out/
+
+# ignore ISOs
+iso
+iso/
+*.iso
+
+# ignore box files
+*.box
