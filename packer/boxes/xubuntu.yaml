@@ -1,0 +1,6 @@
+name: xenial-xubuntu
+desc: xenial xubuntu development box
+iso: 
+  directory: http://cdimage.ubuntu.com/xubuntu/releases/xenial/release/
+  src: http://cdimage.ubuntu.com/xubuntu/releases/xenial/release/xubuntu-16.04.4-desktop-amd64.iso 
+  basename: xubuntu-16.04.4-desktop-amd64.iso 

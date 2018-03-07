@@ -1,0 +1,70 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# home is a small helper function that translates the home path string.
+#   there is probably a cleaner way to do this, but this works
+def home
+  @home ||= ENV.fetch("HOME").tr("\\", "/")
+end
+
+# username is a small helper function for grabbing your username from the env
+#   variables
+def username
+  ENV.fetch("USERNAME")
+end
+
+Vagrant.configure("2") do |config|
+  # config.vm.box = "canis/major"
+  # config.vm.box_url = "https://vagrantcloud.com/canis/boxes/major/versions/2018.02.12/providers/virtualbox.box"
+  config.vm.box = "box_name"
+  config.vm.box_url = "box_name.box"
+
+  [1080, 3000, 3333, 4000].each do |port|
+    config.vm.network "forwarded_port", guest: port, host: port, auto_correct: true, protocol: :tcp
+  end
+
+  # config.vm.network "private_network", ip: "192.168.33.10"
+  # config.vm.network "public_network"
+
+  config.vm.synced_folder "./", "/var/sites/dev.query-auth", 
+    id: "vagrant-root",
+    owner: "vagrant",
+    group: "vagrant",
+    mount_options: ["dmode=775,fmode=664"]
+
+  dirs = %w(Documents Downloads Music Pictures Videos)
+
+  dirs.each do |dir|
+    config.vm.synced_folder "#{home}/#{dir}", "/home/vagrant/#{dir}",
+      id: dir,
+      owner: "vagrant",
+      group: "vagrant",
+      mount_options: ["dmode=775,fmode=664"]
+  end
+
+  config.vm.synced_folder "#{home}", "/home/vagrant/home",
+    id: "home",
+    owner: "vagrant",
+    group: "vagrant",
+    mount_options: ["dmode=775,fmode=664"]
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.gui = true
+    vb.memory = "4096"
+    vb.cpus = 2
+    vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
+    vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
+    vb.customize ["modifyvm", :id, "--accelerate3d", "off"]
+    vb.customize ["modifyvm", :id, "--vram", "128"]
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+    vb.customize ['modifyvm', :id, '--cableconnected1', 'on']
+  end
+                      
+  ## Copy generated ssh id_rsa certs
+  config.vm.provision :file, source: "#{home}/.ssh/id_rsa", destination: "/home/vagrant/.ssh/id_rsa"
+  config.vm.provision :file, source: "#{home}/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/id_rsa.pub"
+  config.vm.provision 'shell', privileged: false, inline: "chmod go-rwx .ssh/id_*"
+
+  ## Copy local .gitconfig
+  config.vm.provision :file, source: "#{home}/.gitconfig", destination: "/home/vagrant/.gitconfig"
+end

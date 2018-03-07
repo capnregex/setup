@@ -1,0 +1,83 @@
+#!/usr/bin/env rake
+# iso source http://releases.ubuntu.com/
+# http://cdimage.ubuntu.com/
+boxes = %w(min minor major max maximum xubuntu)
+
+SRC_REGEX = %r(src/(\w*)\.json)
+src_files = FileList['src/*.json']
+names = []
+src_files.each do |src_file|
+  m = SRC_REGEX.match(src_file)
+  next unless m
+  name = m[1]
+  names.push name
+  box_file = "#{name}.virtualbox.box"
+  out_dir = "out/#{name}"
+  
+  file out_dir => src_file do 
+    sh "packer build -var 'name=#{name}' #{src_file}"
+  end
+
+  file box_file => [src_file,out_dir] do
+    rm_rf out_dir
+    sh "packer build -var 'name=#{name}' #{src_file}"
+  end
+
+  namespace name do 
+    desc "Build the #{name} box"
+    task build: [box_file] do
+    end
+    
+    desc "uninstall the #{name} box"
+    task :uninstall do
+      sh "vagrant box remove #{name} -f || true"
+    end
+    
+    desc "install the #{name} box"
+    task install: box_file do
+      sh "vagrant box add --force --name=#{name} #{box_file}"
+    end
+
+    desc "test the #{name} box"
+    task test: "install:#{name}" do
+      mkdir_p name
+      cd name
+      sh "vagrant up"
+      sh "vagrant ssh"
+      sh "vagrant destroy -f"
+    end
+
+    desc "remove the #{name} box"
+    task :clean do
+      rm_rf FileList["#{name}.virtualbox.box"]
+      rm_rf FileList["out/#{name}"]
+    end
+
+  end
+  task name => "build:#{name}"
+  task build: "build:#{name}"
+  task install: "install:#{name}"
+  task uninstall: "uninstall:#{name}"
+end
+
+desc "install all the boxes"
+task :install
+
+desc "uninstall all the boxes"
+task :uninstall
+
+#  sh "vagrant box add --force --name=test/minor ./minor.virtualbox.box"
+
+file 'major.virtualbox.box' => 'minor.virtualbox.box'
+file 'minor.virtualbox.box' => 'minimus.virtualbox.box'
+
+#  sh "vagrant box add --force --name=test/minor ./minor.virtualbox.box"
+#  sh "cd major; vagrant destroy -f; vagrant up"
+
+task default: :major
+
+task :clean do
+  rm_rf FileList['*.box']
+  rm_rf FileList['out/*']
+end
+

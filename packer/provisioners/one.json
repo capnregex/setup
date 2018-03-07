@@ -1,0 +1,46 @@
+{
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "DEBIAN_FRONTEND=noninteractive"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "expect_disconnect": true,
+      "scripts": [
+        "src/sudoers.sh",
+        "src/upgrade.sh",
+        "src/sshd.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "DEBIAN_FRONTEND=noninteractive"
+      ],
+      "execute_command": "{{.Vars}} sh -eux '{{.Path}}'",
+      "expect_disconnect": true,
+      "scripts": [
+        "src/maximus.sh",
+        "src/postgres.sh",
+        "src/rvm.sh",
+        "src/vagrant.sh"
+      ],
+      "type": "shell"
+    },
+    {
+      "environment_vars": [
+        "HOME_DIR=/home/vagrant",
+        "DEBIAN_FRONTEND=noninteractive"
+      ],
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "expect_disconnect": true,
+      "scripts": [
+        "src/webkit.sh",
+        "src/chrome.sh",
+        "src/autologin.sh",
+        "src/virtualbox.sh",
+        "src/cleanup.sh",
+        "src/minimize.sh"
+      ],
+      "type": "shell"
+    }
