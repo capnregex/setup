@@ -54,10 +54,10 @@ src_files.each do |src_file|
     end
 
   end
-  task name => "build:#{name}"
-  task build: "build:#{name}"
-  task install: "install:#{name}"
-  task uninstall: "uninstall:#{name}"
+  task name => "#{name}:build"
+  task build: "#{name}:build"
+  task install: "#{name}:install"
+  task uninstall: "#{name}:uninstall"
 end
 
 desc "install all the boxes"
@@ -74,7 +74,7 @@ file 'minor.virtualbox.box' => 'minimus.virtualbox.box'
 #  sh "vagrant box add --force --name=test/minor ./minor.virtualbox.box"
 #  sh "cd major; vagrant destroy -f; vagrant up"
 
-task default: :major
+task default: :build
 
 task :clean do
   rm_rf FileList['*.box']
