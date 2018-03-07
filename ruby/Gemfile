@@ -1,0 +1,26 @@
+
+
+gem 'bundler'
+gem 'rake'
+gem 'rake-notes'
+
+# Testing Framework
+gem 'capybara', '=2.12.1'
+gem 'capybara-screenshot', group: :test
+gem 'capybara-webkit', '=1.12'
+gem 'rspec', '=3.6', :require => false, :group => :test
+gem 'rspec-retry', '~> 0.5', :group => :test 
+gem 'simplecov', :require => false, :group => :test
+gem 'guard-rspec', require: false, group: :test
+
+# Needed for Parallel Execution
+gem 'parallel_tests', '=2.14.1'  # AFAIK we aren't using this. Might be vestigial.
+
+# Webdrivers
+gem 'selenium-webdriver', '~> 3.4'
+
+# Debugging Tools
+gem 'awesome_print'
+gem 'byebug'
+gem 'pry'
+

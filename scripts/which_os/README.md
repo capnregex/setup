@@ -1,3 +1,0 @@
-## DIDit Developers Setup Scripts
-
-
