@@ -10,7 +10,7 @@ sudo apt-get -y install npm yarn
 # this command will direct npm to use the ca cert pem bundle homebrew created when 
 # it installed openssl
 # npm config set cafile="`ruby -ropenssl -e 'puts OpenSSL::X509::DEFAULT_CERT_FILE'`"
-npm config set "strict-ssl" true
+# npm config set "strict-ssl" true
 
 sudo npm install -g n
 
