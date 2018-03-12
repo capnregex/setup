@@ -22,7 +22,7 @@ packages = []
 open 'packages.list' do |file|
   file.each_line do |line|
     line.chomp!
-    line.sub! /\#.*$//
+    line.sub! /\#.*$/,''
     line.strip!
     if line =~ /^[\w-]*$/
       packages.push line
@@ -39,10 +39,9 @@ archive_mirror = 'http://us.archive.ubuntu.com/ubuntu'
 
 # execute debootstrap
 # download-only so it does not unpack them all
-# fakechroot so you don't need sudo 
-exec(<<~CMD.join(' ')
+exec <<~CMD.gsub(/\n\s*/,' ')
   sudo debootstrap
-    --download-only --variant=fakechroot
+    --download-only
     --components="#{components}"
     --include="#{packages}"
     #{release_suite}

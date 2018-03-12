@@ -12,24 +12,13 @@
         "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
         "<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
         "<bs><bs><bs>",
-        "/install/vmlinuz",
-        " auto",
-        " console-setup/ask_detect=false",
-        " console-setup/layoutcode=us",
-        " console-setup/modelcode=pc105",
-        " debconf/frontend=noninteractive",
-        " debian-installer=en_US.UTF-8",
-        " fb=false",
+        " auto priority=critical",
+        " vga=normal fb=false",
+        " locale=en_US",
         " initrd=/install/initrd.gz",
-        " kbd-chooser/method=us",
-        " keyboard-configuration/layout=USA",
-        " keyboard-configuration/variant=USA",
-        " locale=en_US.UTF-8",
-        " netcfg/get_domain=vm",
-        " netcfg/get_hostname=vagrant",
-        " grub-installer/bootdev=/dev/sda",
         " noapic",
-        " url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{ user `preseed` }}",
+        " url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/{{ user `name` }}.cfg",
+        " DEBIAN_FRONTEND=text",
         " -- ",
         "<enter>"
       ],
@@ -59,59 +48,28 @@
       "vm_name": "{{ user `name` }}"
     }
   ],
+  "provisioners": [
+    { "type": "file", "source": "../scripts", "destination": "/home/vagrant/bin" },
+    { 
+      "type": "shell", 
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
+      "inline": [
+        "export PATH=/home/vagrant/bin:$PATH",
+        "allow_vagrant_to_sudo_without_password",
+        "allow_ssh_with_vagrant_public_key",
+        "upgrade_packages",
+        "install_virtualbox_additions",
+        "clear_apt_cache",
+        "wipe_empty_space_on_drive"
+      ]
+    }
+  ],
   "post-processors": [
     {
       "type": "vagrant",
       "output": "{{ user `name` }}.{{.Provider}}.box",
+      "vagrantfile_template": "templates/Vagrantfile",
       "keep_input_artifact": true
-    }
-  ],
-  "provisioners": [
-    {
-      "environment_vars": [
-        "HOME_DIR=/home/vagrant",
-        "DEBIAN_FRONTEND=noninteractive"
-      ],
-      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
-      "expect_disconnect": true,
-      "scripts": [
-        "src/sudoers.sh",
-        "src/upgrade.sh",
-        "src/xubuntu.sh",
-        "src/sshd.sh"
-      ],
-      "type": "shell"
-    },
-    {
-      "environment_vars": [
-        "HOME_DIR=/home/vagrant",
-        "DEBIAN_FRONTEND=noninteractive"
-      ],
-      "execute_command": "{{.Vars}} sh -eux '{{.Path}}'",
-      "expect_disconnect": true,
-      "scripts": [
-        "src/postgres.sh",
-        "src/rvm.sh",
-        "src/vagrant.sh"
-      ],
-      "type": "shell"
-    },
-    {
-      "environment_vars": [
-        "HOME_DIR=/home/vagrant",
-        "DEBIAN_FRONTEND=noninteractive"
-      ],
-      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E sh -eux '{{.Path}}'",
-      "expect_disconnect": true,
-      "scripts": [
-        "src/webkit.sh",
-        "src/chrome.sh",
-        "src/autologin.sh",
-        "src/virtualbox.sh",
-        "src/cleanup.sh",
-        "src/minimize.sh"
-      ],
-      "type": "shell"
     }
   ],
   "variables": {

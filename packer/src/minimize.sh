@@ -30,4 +30,5 @@ if [ "x${swapuuid}" != "x" ]; then
 fi
 
 sync
+sync
 

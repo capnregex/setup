@@ -1,0 +1,61 @@
+#!/usr/bin/env ruby
+# 
+# this script takes a list of packages and downloads them into a file structure
+# where they would be ready to install
+#
+# to download individual packages
+# apt-get download ruby
+# 
+# Debootstrap is a debian utility to bootstrap an installation
+# It has a handy ability to also download packages with all their dependencies 
+# 
+# debootstrap - Installing Debian GNU/Linux from a Unix/Linux System
+# article https://www.debian.org/releases/stable/i386/apds03.html
+# homepage https://wiki.debian.org/Debootstrap
+# manpage https://manpages.debian.org/stretch/debootstrap/debootstrap.8.en.html
+# also    https://linux.die.net/man/8/debootstrap
+# 
+
+
+# prepare the list of packages
+packages = []
+open 'packages.list' do |file|
+  file.each_line do |line|
+    line.chomp!
+    line.sub! /\#.*$/,''
+    line.strip!
+    if line =~ /^[\w-]*$/
+      packages.push line
+    end
+  end
+end
+
+# set the arguments
+packages = packages.join(',')
+components = "main,restricted,universe,multiverse"
+release_suite = 'xenial'
+target_directory = 'xenial'
+#archive_mirror = 'http://us.archive.ubuntu.com/ubuntu'
+archive_mirror = 'file:///storage/apt-mirror/mirror/us.archive.ubuntu.com/ubuntu'
+
+# execute debootstrap
+# download-only so it does not unpack them all
+system <<~CMD.gsub(/\n\s*/,' ')
+    sudo debootstrap
+      --components="#{components}"
+      --include="#{packages}"
+      #{release_suite}
+      #{target_directory}
+      #{archive_mirror}
+  CMD
+
+system "sudo cp etc/* #{target_directory}/etc"
+
+# main # debootstrap sid sid-root http://deb.debian.org/debian/ 
+# [ ... watch it download the whole system ] 
+
+# main # mount proc sid-root/proc -t proc 
+# main # mount sysfs sid-root/sys -t sysfs 
+
+# main # cp /etc/hosts sid-root/etc/hosts 
+# main # chroot sid-root /bin/bash

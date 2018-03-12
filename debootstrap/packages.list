@@ -1,7 +1,11 @@
 xubuntu-core
 openssh-server
-ruby
-nodejs
+postgresql
+postgresql-contrib
 vim-gnome
 terminator
 linux-virtual
+grub-pc
+ruby
+nodejs
+npm

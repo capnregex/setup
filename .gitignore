@@ -20,3 +20,8 @@ iso/
 
 # ignore box files
 *.box
+
+# ignore debian package files
+*.deb
+*.InRelease
+*.Release

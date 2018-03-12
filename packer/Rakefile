@@ -13,21 +13,18 @@ src_files.each do |src_file|
   names.push name
   box_file = "#{name}.virtualbox.box"
   out_dir = "out/#{name}"
+  ovf_file = "#{out_dir}/#{name}.ovf"
   
-  file out_dir => src_file do 
-    sh "packer build -var 'name=#{name}' #{src_file}"
-  end
-
-  file box_file => [src_file,out_dir] do
-    rm_rf out_dir
-    sh "packer build -var 'name=#{name}' #{src_file}"
-  end
-
   namespace name do 
-    desc "Build the #{name} box"
-    task build: [box_file] do
+    file ovf_file => [src_file] do
+      rm_rf out_dir
+      sh "packer build -var 'name=#{name}' #{src_file}"
     end
-    
+    file box_file => ovf_file
+
+    desc "Build the #{name} box"
+    task build: ovf_file
+
     desc "uninstall the #{name} box"
     task :uninstall do
       sh "vagrant box remove #{name} -f || true"
@@ -39,12 +36,18 @@ src_files.each do |src_file|
     end
 
     desc "test the #{name} box"
-    task test: "install:#{name}" do
-      mkdir_p name
-      cd name
+    task test: "#{name}:install" do
+      test_dir = "test/#{name}"
+      rm_rf test_dir
+      mkdir_p test_dir
+      cd test_dir
+      sh "vagrant init #{name}"
       sh "vagrant up"
       sh "vagrant ssh"
+      sh "vagrant halt"
       sh "vagrant destroy -f"
+      cd '../..'
+      rm_rf test_dir
     end
 
     desc "remove the #{name} box"
@@ -54,6 +57,7 @@ src_files.each do |src_file|
     end
 
   end
+
   task name => "#{name}:build"
   task build: "#{name}:build"
   task install: "#{name}:install"
@@ -68,8 +72,7 @@ task :uninstall
 
 #  sh "vagrant box add --force --name=test/minor ./minor.virtualbox.box"
 
-file 'major.virtualbox.box' => 'minor.virtualbox.box'
-file 'minor.virtualbox.box' => 'minimus.virtualbox.box'
+# file 'xenial.virtualbox.box' => 'out/min/min.ovf'
 
 #  sh "vagrant box add --force --name=test/minor ./minor.virtualbox.box"
 #  sh "cd major; vagrant destroy -f; vagrant up"
