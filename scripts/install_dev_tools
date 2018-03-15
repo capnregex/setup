@@ -1,0 +1,22 @@
+#!/bin/bash -eux
+
+export PATH=$(cd `dirname $0` && pwd):$PATH
+
+## refresh apt-cache 
+sudo apt-get -y update
+
+## make sure we are up to date with our patches
+sudo apt-get -y upgrade
+
+## install core packages
+sudo apt-get -y install \
+  build-essential ruby nodejs npm firefox wget curl \
+  vim-gnome terminator chromium-browser git
+
+install_gvim
+install_google_chrome
+install_git
+install_git_prompt
+install_rvm
+install_nodejs
+

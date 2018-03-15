@@ -1,0 +1,13 @@
+#!/bin/bash -eux
+
+#absolute path
+DIRECTORY=$(cd `dirname $0` && pwd)
+echo $DIRECTORY
+
+echo "$0" $0
+dir=$PWD
+cd $(dirname $0)
+echo adding $PWD to path
+export PATH=$PWD:$PATH
+cd $dir
+
