@@ -1,0 +1,39 @@
+#!/bin/bash -eux
+# install eagle cad
+# download page
+# https://www.autodesk.com/products/eagle/free-download
+
+download_dir=/opt/eagle_cad
+download_url=https://www.autodesk.com/eagle-download-lin
+
+sudo mkdir -p $download_dir
+cd $download_dir
+
+if ! compgen -G "eagle-*" > /dev/null
+then
+  # Downloading Eagle Cad from Autodesk
+  curl -L $download_url | sudo tar -xzf -
+  sudo chmod -R u+rwX,go+rX,go-w eagle-*
+fi
+dir=$( ls -d1 $download_dir/eagle-* | head -1 )
+bin=$dir/eagle
+icon=$dir/bin/eagle-logo.png
+if [[ -x $bin ]]
+then
+  sudo mkdir -p bin
+  sudo ln -sf $bin bin
+  sudo ln -sf $bin /usr/bin/eagle
+fi
+
+sudo tee /usr/share/applications/eagle_cad.desktop <<-DESKTOP > /dev/null
+[Desktop Entry]
+Version=1.0
+Type=Application
+Encoding=UTF-8
+Name=Eagle CAD
+Comment=Eagle CAD by Autodesk
+Exec=$bin
+Icon=$icon
+Terminal=false
+DESKTOP
+
