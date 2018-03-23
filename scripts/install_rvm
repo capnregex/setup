@@ -32,6 +32,9 @@ gem update --system
 rvm use --default 2.4.3
 gem update --system
 
+# default settings
+rvm rvmrc warning ignore allGemfiles
+
 # remove cruft
 rvm cleanup all
 
