@@ -11,7 +11,7 @@ sudo apt-get -y upgrade
 ## install core packages
 sudo apt-get -y install \
   build-essential ruby nodejs npm firefox wget curl \
-  vim-gnome terminator chromium-browser git
+  vim-gnome terminator chromium-browser git xclip xsel
 
 install_gvim
 install_google_chrome
