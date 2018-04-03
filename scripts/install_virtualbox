@@ -1,0 +1,24 @@
+#!/bin/bash 
+# docs https://www.virtualbox.org/wiki/Linux_Downloads
+# version https://download.virtualbox.org/virtualbox/LATEST-STABLE.TXT
+# https://download.virtualbox.org/virtualbox/UserManual.pdf
+
+key_url=https://www.virtualbox.org/download/oracle_vbox_2016.asc
+old_key_url=https://www.virtualbox.org/download/oracle_vbox.asc
+ppa_type=deb
+ppa_url=https://download.virtualbox.org/virtualbox/debian
+ppa_dist=$( lsb_release -cs )
+ppa_comp="contrib non-free"
+ppa="$ppa_type $ppa_url $ppa_dist $ppa_comp"
+ppa_src=virtualbox.org
+ppa_list=/etc/apt/sources.list.d/$ppa_src.list
+
+echo $ppa | sudo tee $ppa_list > /dev/null
+
+wget -q $key_url -O- | sudo apt-key add -
+wget -q $old_key_url -O- | sudo apt-key add -
+
+sudo apt-get -y update
+
+sudo apt-get -y install virtualbox-5.2
+
