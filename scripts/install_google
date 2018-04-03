@@ -1,13 +1,15 @@
 #!/bin/sh -eux
 
 key="https://dl-ssl.google.com/linux/linux_signing_key.pub"
-list="/etc/apt/sources.list.d/google-chrome.list"
-repo="http://dl.google.com/linux/chrome/deb/"
+list="/etc/apt/sources.list.d/google.list"
+repo=""
 
 wget -q -O - $key | sudo apt-key add - 
 
 sudo tee $list <<CFG 
-deb [arch=amd64] $repo stable main
+deb [arch=amd64] http://dl.google.com/linux/musicmanager/deb/ stable main
+deb [arch=amd64] http://dl.google.com/linux/talkplugin/deb/ stable main
+deb [arch=amd64] http://dl.google.com/linux/deb/ stable non-free
 CFG
 
 sudo apt-get -y update
