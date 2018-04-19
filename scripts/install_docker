@@ -36,7 +36,7 @@ sudo docker run hello-world
 
 ## manage-docker-as-a-non-root-user
 ## https://docs.docker.com/install/linux/linux-postinstall/#manage-docker-as-a-non-root-user
-sudo groupadd docker
+sudo groupadd docker || echo "yay group exists already"
 
 sudo usermod -aG docker $USER
 
